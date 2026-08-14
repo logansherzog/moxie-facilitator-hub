@@ -59,16 +59,6 @@
     return hit;
   }
 
-  function buildPrompt(l) {
-    var objs = (l.objectives || []).join("; ");
-    var plan = (l.lessonPlan || []).map(function (b) { return b.block + " — " + b.detail; }).join("\n");
-    var gq = l.guidingQuestion ? ("\n\nThe guiding question for the week is: " + l.guidingQuestion) : "";
-    return 'I\'m about to facilitate the Startup Moxie week "' + l.title + '".' + gq +
-      "\n\nThe objectives are: " + objs +
-      "\n\nThe week runs:\n" + plan +
-      "\n\nHelp me prep: walk me through how to open Monday, anticipate where students get stuck, and suggest 3 discussion questions.";
-  }
-
   function setNav(page) {
     var o = document.getElementById("nav-overview"), s = document.getElementById("nav-structure");
     if (o) o.classList.toggle("active", page === "overview");
@@ -308,7 +298,6 @@
             (fullPlan ? '<a href="#s-full">Full plan</a>' : '') +
             '<a href="#s-pod">Podcast</a>' +
             '<a href="#s-notes">Notes &amp; resources</a>' +
-            '<a class="accent" href="#s-prep">Prep with Claude</a>' +
           '</nav>' +
         '</aside>' +
         '<div class="content">' +
@@ -329,27 +318,8 @@
             '<p style="font-family:var(--font-display);font-weight:500;font-size:20px;line-height:1.55;color:var(--text-heading);margin:0;max-width:62ch;border-left:3px solid var(--color-highlight);padding-left:22px">' +
             esc(l.facilitatorNotes || l.guidingQuestion || 'Keep the week anchored to its guiding question and end each day on a concrete next action.') + '</p>' +
             resources + '</section>' +
-          '<section id="s-prep" class="prep">' +
-            '<div class="eyebrow">Voice-mode prep</div>' +
-            '<h2>Prep with Claude</h2>' +
-            '<p>Copy this prompt built from the week, then paste it into Claude voice mode to rehearse.</p>' +
-            '<div class="prep-box" id="prep-box">' + esc(buildPrompt(l)) + '</div>' +
-            '<div class="prep-actions"><button class="prep-btn" id="prep-copy">' + ic('copy') + 'Copy prompt</button>' +
-            '<span class="prep-copied" id="prep-copied" style="display:none">' + ic('check') + 'Copied</span></div>' +
-          '</section>' +
         '</div>' +
       '</div>';
-
-    var btn = document.getElementById("prep-copy");
-    var flag = document.getElementById("prep-copied");
-    var t;
-    btn.addEventListener("click", function () {
-      var text = buildPrompt(l);
-      if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
-      flag.style.display = "";
-      clearTimeout(t);
-      t = setTimeout(function () { flag.style.display = "none"; }, 2200);
-    });
 
     wireScrollSpy();
     drawIcons();

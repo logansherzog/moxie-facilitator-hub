@@ -2,7 +2,7 @@
 // still in the page source — this just keeps the hub off search engines
 // and out of casual reach. Password hash lives here as SHA-256, not plaintext.
 (function () {
-  var PASSWORD_HASH = "b425939f82a2738ab01873e9ecb4eb282d06897f9f145f36ff8ce60acaf868b0";
+  var PASSWORD_HASH = "ac9ceb9bf8e3bbe7d91dc5514b0dca18c41ae10ea7261a486d9f1de62a461f80";
   var SESSION_KEY = "moxie-hub-unlocked";
 
   if (sessionStorage.getItem(SESSION_KEY) === "1") return;
