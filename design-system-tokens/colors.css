@@ -1,0 +1,89 @@
+/* ============================================================
+   COLORS — Startup Moxie Elkhart County
+   Base palette pulled from brand swatches + logo.
+   ============================================================ */
+:root {
+  /* --- Brand base palette (raw) --- */
+  --moxie-blue: #0c5689;      /* primary — lightbulb outline + wordmark */
+  --moxie-pink: #e3359e;      /* magenta filament (top of the M) */
+  --moxie-lime: #d8d849;      /* chartreuse filament (bulb base) */
+  --moxie-purple: #575da9;    /* supporting violet */
+
+  /* --- Blue ramp --- */
+  --blue-900: #062f4d;
+  --blue-800: #093f66;
+  --blue-700: #0c5689;   /* = brand blue */
+  --blue-600: #14689f;
+  --blue-500: #2b7fb8;
+  --blue-300: #7db4d6;
+  --blue-100: #d3e6f2;
+  --blue-050: #eef5fa;
+
+  /* --- Pink ramp --- */
+  --pink-700: #b8207c;
+  --pink-600: #e3359e;   /* = brand pink */
+  --pink-500: #ec5cb2;
+  --pink-300: #f4a0d3;
+  --pink-100: #fbdcef;
+
+  /* --- Lime ramp --- */
+  --lime-700: #9a9a1f;
+  --lime-600: #bcbc30;
+  --lime-500: #d8d849;   /* = brand lime */
+  --lime-300: #e7e784;
+  --lime-100: #f4f4c7;
+
+  /* --- Purple ramp --- */
+  --purple-700: #3f4585;
+  --purple-600: #575da9;  /* = brand purple */
+  --purple-400: #8e93c6;
+  --purple-100: #e0e1f0;
+
+  /* --- Neutrals (cool, tuned toward the blue) --- */
+  --ink-900: #14202b;   /* headings / near-black */
+  --ink-700: #33475a;   /* body text */
+  --ink-500: #5c6b78;   /* muted / captions */
+  --ink-400: #8a97a2;   /* placeholder */
+  --line-200: #d9e0e6;  /* borders / dividers */
+  --line-100: #eaeef1;  /* hairlines */
+  --paper-50: #f5f8fa;  /* app background */
+  --paper-0:  #ffffff;  /* card / surface */
+
+  /* --- Semantic aliases --- */
+  --color-primary: var(--blue-700);
+  --color-primary-hover: var(--blue-800);
+  --color-primary-active: var(--blue-900);
+  --color-primary-soft: var(--blue-050);
+
+  --color-accent: var(--pink-600);
+  --color-accent-hover: var(--pink-700);
+  --color-accent-soft: var(--pink-100);
+
+  --color-highlight: var(--lime-500);      /* lime — sparing energy pops */
+  --color-highlight-soft: var(--lime-100);
+  --color-support: var(--purple-600);
+  --color-support-soft: var(--purple-100);
+
+  --text-heading: var(--ink-900);
+  --text-body: var(--ink-700);
+  --text-muted: var(--ink-500);
+  --text-on-dark: #ffffff;
+  --text-link: var(--blue-700);
+  --text-link-hover: var(--pink-600);
+
+  --surface-app: var(--paper-50);
+  --surface-card: var(--paper-0);
+  --surface-inverse: var(--blue-900);
+  --border-default: var(--line-200);
+  --border-subtle: var(--line-100);
+
+  /* --- Feedback --- */
+  --success: #2f9e6b;
+  --success-soft: #e2f3ec;
+  --warning: #e0a23a;
+  --warning-soft: #fbf0da;
+  --danger: #d64545;
+  --danger-soft: #fbe4e4;
+  --info: var(--blue-600);
+  --info-soft: var(--blue-050);
+}

@@ -1,0 +1,195 @@
+<!--
+  Startup Moxie · Week 24 — Campaign Launch Tracker
+  Built from tools/_template.html. Only (A) META, (B) INPUTS, (C) TASK differ.
+  v1: enter this check-in's numbers vs. last; one AI call reads the trend. A local
+  log with a sparkline (localStorage) is a possible v2.
+-->
+<title>Week 24 · Campaign Launch Tracker · Startup Moxie</title>
+<style>
+  :root {
+    --blue-900:#062f4d; --blue-700:#0c5689; --blue-500:#2b7fb8; --blue-050:#eef5fa;
+    --pink-600:#e3359e; --pink-100:#fbdcef; --lime-500:#d8d849; --purple-600:#575da9;
+    --ink-900:#14202b; --ink-700:#33475a; --ink-500:#5c6b78; --line-200:#d9e0e6;
+    --paper-0:#ffffff; --paper-50:#f5f8fa; --ok:#2f9e6b; --bad:#d64545; --wait:#e0a23a;
+    --bg:var(--paper-50); --card:var(--paper-0); --text:var(--ink-700); --head:var(--ink-900);
+    --muted:var(--ink-500); --border:var(--line-200); --accent:var(--pink-600); --primary:var(--blue-700);
+    --soft:var(--blue-050); --field:#ffffff;
+  }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0b1620; --card:#132330; --text:#c6d3dd; --head:#eef5fa; --muted:#8a97a2; --border:#25384a; --soft:#12202c; --field:#0e1c27; } }
+  :root[data-theme="dark"] { --bg:#0b1620; --card:#132330; --text:#c6d3dd; --head:#eef5fa; --muted:#8a97a2; --border:#25384a; --soft:#12202c; --field:#0e1c27; }
+  :root[data-theme="light"] { --bg:var(--paper-50); --card:var(--paper-0); --text:var(--ink-700); --head:var(--ink-900); --muted:var(--ink-500); --border:var(--line-200); --soft:var(--blue-050); --field:#ffffff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:720px; margin:0 auto; padding:44px 22px 96px; }
+  header.tool-head { margin-bottom:32px; }
+  .eyebrow { font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0 0 10px; }
+  h1 { font-size:31px; line-height:1.12; letter-spacing:-.02em; color:var(--head); margin:0 0 10px; font-weight:800; text-wrap:balance; }
+  .leave-with { color:var(--muted); font-size:16px; margin:0; max-width:60ch; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:20px; }
+  .card > .sec { font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0 0 18px; font-weight:700; }
+  label { display:block; font-weight:600; color:var(--head); font-size:14px; margin:0 0 6px; }
+  .hint { font-weight:400; color:var(--muted); }
+  .field { margin-bottom:18px; } .field:last-child { margin-bottom:0; }
+  input[type=text], input[type=number], textarea, select { width:100%; font:inherit; color:var(--head); background:var(--field); border:1px solid var(--border); border-radius:9px; padding:11px 13px; resize:vertical; }
+  input:focus, textarea:focus, select:focus { outline:2px solid var(--primary); outline-offset:1px; border-color:var(--primary); }
+  textarea { min-height:72px; line-height:1.5; }
+  .row { display:flex; gap:16px; } .row .field { flex:1; }
+  .grid4 { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  input[type=number]{ font-variant-numeric:tabular-nums; }
+  @media (max-width:520px){ .row { flex-direction:column; gap:0; } }
+  .colhead { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:14px; align-items:end; margin-bottom:6px; }
+  .colhead span { font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+  .metric { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:14px; align-items:center; margin-bottom:10px; }
+  .metric label { margin:0; font-size:14px; }
+  .actions { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:8px; }
+  button { appearance:none; border:none; cursor:pointer; font:inherit; font-weight:700; border-radius:10px; font-size:15px; transition:background .15s,opacity .15s; }
+  .btn-primary { background:var(--primary); color:#fff; padding:14px 24px; }
+  .btn-primary:hover:not(:disabled) { background:var(--blue-900); }
+  .btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-ghost { background:transparent; color:var(--primary); padding:10px 4px; }
+  .btn-ghost:hover { color:var(--accent); }
+  button:focus-visible { outline:3px solid var(--lime-500); outline-offset:2px; }
+  .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; display:inline-block; vertical-align:-3px; margin-right:8px; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion:reduce) { .spinner { animation:none; } }
+  .banner { padding:13px 16px; border-radius:10px; font-size:14px; font-weight:600; margin-bottom:18px; display:none; }
+  .banner.show { display:block; } .banner.err { background:#fbe4e4; color:var(--bad); }
+  @media (prefers-color-scheme: dark){ .banner.err { background:#2a1618; } }
+  #outCard { display:none; } #outCard.show { display:block; }
+  .out-body { color:var(--text); font-size:15.5px; }
+  .out-body h3 { color:var(--head); font-size:17px; margin:24px 0 8px; padding-top:2px; }
+  .out-body h3:first-child { margin-top:0; }
+  .out-body p { margin:0 0 12px; } .out-body ul { margin:0 0 12px; padding-left:20px; } .out-body li { margin:4px 0; }
+  .out-body strong { color:var(--head); }
+  .export { display:flex; gap:14px; margin-top:20px; padding-top:18px; border-top:1px solid var(--border); }
+  .toast { position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:var(--head); color:var(--bg); padding:10px 18px; border-radius:8px; font-size:14px; font-weight:600; opacity:0; pointer-events:none; transition:opacity .2s; }
+  .toast.show { opacity:1; }
+  footer { color:var(--muted); font-size:12.5px; text-align:center; margin-top:30px; } footer .dot { color:var(--lime-500); }
+</style>
+
+<div class="wrap">
+  <!-- (A) META -->
+  <header class="tool-head">
+    <p class="eyebrow">Startup Moxie · Week 24 · Live Campaign</p>
+    <h1>Campaign Launch Tracker</h1>
+    <p class="leave-with">Log where your live campaign stands, see where people are dropping off, and get one change to make before you spend more effort.</p>
+  </header>
+
+  <div class="banner err" id="bridgeBanner"></div>
+
+  <!-- (B) INPUTS -->
+  <div class="card">
+    <p class="sec">This check-in</p>
+    <div class="field">
+      <label for="in_campaign">What campaign is running? <span class="hint">— channel + offer</span></label>
+      <input type="text" id="in_campaign" placeholder="e.g. Instagram posts driving DM preorders for $8 keychains" />
+    </div>
+
+    <div class="colhead">
+      <span>Funnel stage</span><span>This time</span><span>Last time</span>
+    </div>
+    <div class="metric">
+      <label for="n_reach">Reach / saw it</label>
+      <input type="number" id="n_reach" min="0" placeholder="0" />
+      <input type="number" id="p_reach" min="0" placeholder="—" />
+    </div>
+    <div class="metric">
+      <label for="n_clicks">Clicks / DMs / asks</label>
+      <input type="number" id="n_clicks" min="0" placeholder="0" />
+      <input type="number" id="p_clicks" min="0" placeholder="—" />
+    </div>
+    <div class="metric">
+      <label for="n_leads">Leads / sign-ups</label>
+      <input type="number" id="n_leads" min="0" placeholder="0" />
+      <input type="number" id="p_leads" min="0" placeholder="—" />
+    </div>
+    <div class="metric">
+      <label for="n_sales">Sales</label>
+      <input type="number" id="n_sales" min="0" placeholder="0" />
+      <input type="number" id="p_sales" min="0" placeholder="—" />
+    </div>
+
+    <div class="field" style="margin-top:16px">
+      <label for="in_changed">Changed anything since last time? <span class="hint">— optional</span></label>
+      <input type="text" id="in_changed" placeholder="e.g. new hook, dropped the price to 3 for $20" />
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="go">Read my numbers</button>
+    </div>
+  </div>
+
+  <div class="card" id="outCard">
+    <p class="sec">Your read</p>
+    <div class="out-body" id="out"></div>
+    <div class="export">
+      <button class="btn-ghost" id="copy">Copy</button>
+      <button class="btn-ghost" id="download">Download</button>
+    </div>
+  </div>
+
+  <footer>AI drafts <span class="dot">·</span> you decide <span class="dot">·</span> systems compound</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+  var MOXIE_PREAMBLE = [
+    "You are a coach inside Startup Moxie, a high-school entrepreneurship program where teenagers build real businesses.",
+    "Speak warm, direct, and practical — like someone who has actually done the work helping a student move. Never corporate.",
+    "Stay inside the Moxie method and use its language where it fits: May-B-P (the smallest testable version), the Mom Test, OODA loops, Walk-Talk-Show-Up discovery, 5 Whys, Problem-Solution-Ask pitches, effectuation / Bird-in-Hand, TAM/SAM/SOM.",
+    "Rules: the student does the thinking — you sharpen it. Be concrete over abstract. Prefer the smallest real-world next step. Never invent facts about their business; if something's missing, say what you'd need. Keep it tight — a teenager reads this at 7:30am.",
+    "Avoid: leverage, unlock, disrupt, synergy, transformational, 'I hope this helps'."
+  ].join("\n");
+  function bridgeReady(){ return typeof window.claude!=="undefined" && window.claude && typeof window.claude.complete==="function"; }
+  async function callClaude(prompt){ if(!bridgeReady()) throw new Error("AI bridge unavailable. Open this on a signed-in Claude account (a free account is fine)."); var r=await window.claude.complete(prompt); return (r==null?"":String(r)).trim(); }
+  function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function render(md){ var lines=esc(md).split(/\r?\n/), html="", inList=false; function closeList(){ if(inList){html+="</ul>";inList=false;} }
+    lines.forEach(function(raw){ var line=raw.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>"); var h=line.match(/^(#{1,4})\s+(.*)$/), b=line.match(/^\s*[-*•]\s+(.*)$/);
+      if(h){closeList();html+="<h3>"+h[2]+"</h3>";} else if(b){ if(!inList){html+="<ul>";inList=true;} html+="<li>"+b[1]+"</li>"; } else if(line.trim()===""){closeList();} else {closeList();html+="<p>"+line+"</p>";} });
+    closeList(); return html; }
+  function toast(msg){ var t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(function(){t.classList.remove("show");},1600); }
+  function wireExport(getText, filename){ document.getElementById("copy").addEventListener("click",function(){ if(navigator.clipboard) navigator.clipboard.writeText(getText()).then(function(){toast("Copied");},function(){}); });
+    document.getElementById("download").addEventListener("click",function(){ var blob=new Blob([getText()],{type:"text/plain"}); var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href); }); }
+  function showBridgeBannerIfNeeded(){ if(!bridgeReady()){ var b=document.getElementById("bridgeBanner"); b.textContent="This tool needs a signed-in Claude account to read your numbers — a free account works. Open the link while logged in."; b.classList.add("show"); } }
+
+  function num(id){ var v=document.getElementById(id).value.trim(); return v===""?null:Number(v); }
+  function fmtStage(name, now, prev){ return "- " + name + ": " + (now==null?"(blank)":now) + (prev==null?"":" (was "+prev+")"); }
+
+  /* (C) TASK */
+  function buildPrompt(v){
+    return MOXIE_PREAMBLE + "\n\n---\n\n" +
+      "TASK: Read a student's live marketing-campaign numbers as a funnel (reach → clicks/DMs → leads → sales) and coach one move. " +
+      "Return exactly these four sections with '### ' headers, nothing before or after:\n\n" +
+      "### What the numbers say\nIn plain language, how the campaign is doing. Where you can, compute the drop-off rate between stages (e.g. only 4% of people who saw it clicked).\n\n" +
+      "### Where it's leaking\nThe single biggest leak in the funnel — the stage losing the most people relative to what's normal — and what that usually means.\n\n" +
+      "### One change to make now\nOne specific, testable change aimed at that leak (fix the hook? the offer? the ask?). If they changed something since last time, say whether the numbers suggest it helped.\n\n" +
+      "### Before you overreact\nIf the sample is tiny (e.g. under ~30–50 people saw it), warn them the numbers don't mean much yet and tell them to get more eyes before judging. Otherwise, what to watch next check-in.\n\n" +
+      "STUDENT INPUTS\n" +
+      "- Campaign: " + v.campaign + "\n- Changed since last time: " + (v.changed||"(nothing noted)") + "\n" +
+      "Funnel (this time / last time):\n" +
+      fmtStage("Reach", v.reach, v.preach) + "\n" + fmtStage("Clicks/DMs", v.clicks, v.pclicks) + "\n" +
+      fmtStage("Leads", v.leads, v.pleads) + "\n" + fmtStage("Sales", v.sales, v.psales);
+  }
+
+  showBridgeBannerIfNeeded();
+  var lastText=""; wireExport(function(){ return lastText; }, "week24-campaign-tracker.txt");
+  var go=document.getElementById("go");
+  go.addEventListener("click", async function(){
+    var campaign=document.getElementById("in_campaign").value.trim();
+    if(!campaign){ document.getElementById("in_campaign").focus(); toast("Name the campaign first"); return; }
+    if(num("n_reach")==null && num("n_clicks")==null && num("n_sales")==null){ document.getElementById("n_reach").focus(); toast("Add at least one number"); return; }
+    go.disabled=true; var label=go.textContent; go.innerHTML='<span class="spinner"></span>Reading…';
+    var outCard=document.getElementById("outCard"), out=document.getElementById("out");
+    try {
+      var reply=await callClaude(buildPrompt({
+        campaign:campaign, changed:document.getElementById("in_changed").value.trim(),
+        reach:num("n_reach"), preach:num("p_reach"), clicks:num("n_clicks"), pclicks:num("p_clicks"),
+        leads:num("n_leads"), pleads:num("p_leads"), sales:num("n_sales"), psales:num("p_sales")
+      }));
+      lastText=reply; out.innerHTML=render(reply); outCard.classList.add("show"); outCard.scrollIntoView({behavior:"smooth",block:"start"});
+    } catch(e){ out.innerHTML='<p style="color:var(--bad)"><strong>Couldn\'t reach the coach.</strong><br>'+esc(e.message)+'</p>'; outCard.classList.add("show"); }
+    finally { go.disabled=false; go.textContent=label; }
+  });
+})();
+</script>

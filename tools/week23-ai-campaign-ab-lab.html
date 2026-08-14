@@ -1,0 +1,237 @@
+<!--
+  Startup Moxie · Week 23 — AI Campaign Generator + A/B Lab
+  Built from tools/_template.html. Only the three TODO blocks differ from the template;
+  brand / bridge / export are shared. See tools/README.md.
+-->
+<title>Week 23 · AI Campaign + A/B Lab · Startup Moxie</title>
+<style>
+  :root {
+    --blue-900:#062f4d; --blue-700:#0c5689; --blue-500:#2b7fb8; --blue-050:#eef5fa;
+    --pink-600:#e3359e; --pink-100:#fbdcef; --lime-500:#d8d849; --purple-600:#575da9;
+    --ink-900:#14202b; --ink-700:#33475a; --ink-500:#5c6b78; --line-200:#d9e0e6;
+    --paper-0:#ffffff; --paper-50:#f5f8fa;
+    --ok:#2f9e6b; --bad:#d64545; --wait:#e0a23a;
+    --bg:var(--paper-50); --card:var(--paper-0); --text:var(--ink-700);
+    --head:var(--ink-900); --muted:var(--ink-500); --border:var(--line-200);
+    --accent:var(--pink-600); --primary:var(--blue-700); --soft:var(--blue-050);
+    --field:#ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0b1620; --card:#132330; --text:#c6d3dd; --head:#eef5fa; --muted:#8a97a2;
+      --border:#25384a; --soft:#12202c; --field:#0e1c27; }
+  }
+  :root[data-theme="dark"] { --bg:#0b1620; --card:#132330; --text:#c6d3dd; --head:#eef5fa; --muted:#8a97a2;
+    --border:#25384a; --soft:#12202c; --field:#0e1c27; }
+  :root[data-theme="light"] { --bg:var(--paper-50); --card:var(--paper-0); --text:var(--ink-700); --head:var(--ink-900);
+    --muted:var(--ink-500); --border:var(--line-200); --soft:var(--blue-050); --field:#ffffff; }
+
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:720px; margin:0 auto; padding:44px 22px 96px; }
+  header.tool-head { margin-bottom:32px; }
+  .eyebrow { font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0 0 10px; }
+  h1 { font-size:31px; line-height:1.12; letter-spacing:-.02em; color:var(--head); margin:0 0 10px; font-weight:800; text-wrap:balance; }
+  .leave-with { color:var(--muted); font-size:16px; margin:0; max-width:60ch; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:20px; }
+  .card > .sec { font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0 0 18px; font-weight:700; }
+  label { display:block; font-weight:600; color:var(--head); font-size:14px; margin:0 0 6px; }
+  .hint { font-weight:400; color:var(--muted); }
+  .field { margin-bottom:18px; } .field:last-child { margin-bottom:0; }
+  input[type=text], textarea, select { width:100%; font:inherit; color:var(--head); background:var(--field);
+    border:1px solid var(--border); border-radius:9px; padding:11px 13px; resize:vertical; }
+  input[type=text]:focus, textarea:focus, select:focus { outline:2px solid var(--primary); outline-offset:1px; border-color:var(--primary); }
+  textarea { min-height:76px; line-height:1.5; }
+  .row { display:flex; gap:16px; } .row .field { flex:1; }
+  @media (max-width:520px){ .row { flex-direction:column; gap:0; } }
+  .actions { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:4px; }
+  button { appearance:none; border:none; cursor:pointer; font:inherit; font-weight:700; border-radius:10px; font-size:15px; transition:background .15s,opacity .15s; }
+  .btn-primary { background:var(--primary); color:#fff; padding:14px 24px; }
+  .btn-primary:hover:not(:disabled) { background:var(--blue-900); }
+  .btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-ghost { background:transparent; color:var(--primary); padding:10px 4px; }
+  .btn-ghost:hover { color:var(--accent); }
+  button:focus-visible { outline:3px solid var(--lime-500); outline-offset:2px; }
+  .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; display:inline-block; vertical-align:-3px; margin-right:8px; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion:reduce) { .spinner { animation:none; } }
+  .banner { padding:13px 16px; border-radius:10px; font-size:14px; font-weight:600; margin-bottom:18px; display:none; }
+  .banner.show { display:block; }
+  .banner.err { background:#fbe4e4; color:var(--bad); }
+  @media (prefers-color-scheme: dark){ .banner.err { background:#2a1618; } }
+  #outCard { display:none; } #outCard.show { display:block; }
+  .out-body { color:var(--text); font-size:15.5px; }
+  .out-body h3 { color:var(--head); font-size:17px; margin:24px 0 8px; padding-top:2px; }
+  .out-body h3:first-child { margin-top:0; }
+  .out-body p { margin:0 0 12px; }
+  .out-body ul { margin:0 0 12px; padding-left:20px; }
+  .out-body li { margin:4px 0; }
+  .out-body strong { color:var(--head); }
+  .export { display:flex; gap:14px; margin-top:20px; padding-top:18px; border-top:1px solid var(--border); }
+  .toast { position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:var(--head); color:var(--bg); padding:10px 18px; border-radius:8px; font-size:14px; font-weight:600; opacity:0; pointer-events:none; transition:opacity .2s; }
+  .toast.show { opacity:1; }
+  footer { color:var(--muted); font-size:12.5px; text-align:center; margin-top:30px; }
+  footer .dot { color:var(--lime-500); }
+</style>
+
+<div class="wrap">
+  <!-- (A) META -->
+  <header class="tool-head">
+    <p class="eyebrow">Startup Moxie · Week 23 · Marketing &amp; Brand</p>
+    <h1>AI Campaign Generator + A/B Lab</h1>
+    <p class="leave-with">Leave with a campaign you could run this week, two A/B versions to test one thing, and a plain-English way to read what the numbers tell you.</p>
+  </header>
+
+  <div class="banner err" id="bridgeBanner"></div>
+
+  <!-- (B) INPUTS -->
+  <div class="card">
+    <p class="sec">Who + what + where</p>
+    <div class="field">
+      <label for="in_segment">Who is this campaign for? <span class="hint">— one specific segment, not "everyone"</span></label>
+      <input type="text" id="in_segment" placeholder="e.g. parents of kids on my little brother's soccer team" />
+    </div>
+    <div class="field">
+      <label for="in_offer">What are you offering — and for how much?</label>
+      <input type="text" id="in_offer" placeholder="e.g. custom team keychains, $8 each or 3 for $20" />
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="in_channel">Where will it run?</label>
+        <select id="in_channel">
+          <option>Instagram</option>
+          <option>TikTok</option>
+          <option>Email</option>
+          <option>Group text / iMessage</option>
+          <option>Flyer with a QR code</option>
+          <option>In person at a table/booth</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="in_goal">What's the one action you want?</label>
+        <input type="text" id="in_goal" placeholder="e.g. DM me to order" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="in_notes">Anything that's worked (or flopped) before? <span class="hint">— optional</span></label>
+      <textarea id="in_notes" placeholder="what you've tried, your brand voice, anything true about these customers"></textarea>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="go">Build my campaign</button>
+    </div>
+  </div>
+
+  <!-- OUTPUT (shared) -->
+  <div class="card" id="outCard">
+    <p class="sec">Your campaign</p>
+    <div class="out-body" id="out"></div>
+    <div class="export">
+      <button class="btn-ghost" id="copy">Copy</button>
+      <button class="btn-ghost" id="download">Download</button>
+    </div>
+  </div>
+
+  <footer>AI drafts <span class="dot">·</span> you decide <span class="dot">·</span> systems compound</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============ SHARED ============ */
+  var MOXIE_PREAMBLE = [
+    "You are a coach inside Startup Moxie, a high-school entrepreneurship program where teenagers build real businesses.",
+    "Speak warm, direct, and practical — like someone who has actually done the work helping a student move. Never corporate.",
+    "Stay inside the Moxie method and use its language where it fits: May-B-P (the smallest testable version), the Mom Test, OODA loops, Walk-Talk-Show-Up discovery, 5 Whys, Problem-Solution-Ask pitches, effectuation / Bird-in-Hand, TAM/SAM/SOM.",
+    "Rules: the student does the thinking — you sharpen it. Be concrete over abstract. Prefer the smallest real-world next step. Never invent facts about their business; if something's missing, say what you'd need. Keep it tight — a teenager reads this at 7:30am.",
+    "Avoid: leverage, unlock, disrupt, synergy, transformational, 'I hope this helps'."
+  ].join("\n");
+
+  function bridgeReady(){ return typeof window.claude!=="undefined" && window.claude && typeof window.claude.complete==="function"; }
+  async function callClaude(prompt){
+    if(!bridgeReady()) throw new Error("AI bridge unavailable. Open this on a signed-in Claude account (a free account is fine).");
+    var r=await window.claude.complete(prompt); return (r==null?"":String(r)).trim();
+  }
+  function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function render(md){
+    var lines=esc(md).split(/\r?\n/), html="", inList=false;
+    function closeList(){ if(inList){html+="</ul>";inList=false;} }
+    lines.forEach(function(raw){
+      var line=raw.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
+      var h=line.match(/^(#{1,4})\s+(.*)$/), b=line.match(/^\s*[-*•]\s+(.*)$/);
+      if(h){closeList();html+="<h3>"+h[2]+"</h3>";}
+      else if(b){ if(!inList){html+="<ul>";inList=true;} html+="<li>"+b[1]+"</li>"; }
+      else if(line.trim()===""){closeList();}
+      else {closeList();html+="<p>"+line+"</p>";}
+    });
+    closeList(); return html;
+  }
+  function toast(msg){ var t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(function(){t.classList.remove("show");},1600); }
+  function wireExport(getText, filename){
+    document.getElementById("copy").addEventListener("click",function(){ if(navigator.clipboard) navigator.clipboard.writeText(getText()).then(function(){toast("Copied");},function(){}); });
+    document.getElementById("download").addEventListener("click",function(){
+      var blob=new Blob([getText()],{type:"text/plain"}); var a=document.createElement("a");
+      a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href);
+    });
+  }
+  function showBridgeBannerIfNeeded(){
+    if(!bridgeReady()){ var b=document.getElementById("bridgeBanner");
+      b.textContent="This tool needs a signed-in Claude account to build your campaign — a free account works. Open the link while logged in.";
+      b.classList.add("show"); }
+  }
+
+  /* ============ (C) TASK ============ */
+  function buildPrompt(v){
+    return MOXIE_PREAMBLE + "\n\n---\n\n" +
+      "TASK: Help this student run one real marketing campaign and A/B test one thing in it. " +
+      "Return exactly these four sections with '### ' headers, nothing before or after:\n\n" +
+      "### The campaign\n" +
+      "3 short, ready-to-send pieces for the channel below — write the ACTUAL copy they can post, not a description. " +
+      "Match the channel's format (caption length, hooks, hashtags only where they belong). Each piece drives the one action.\n\n" +
+      "### The A/B test\n" +
+      "Pick ONE piece to test. State the single variable you're changing (e.g. the hook, the offer framing, the call to action) as a one-line hypothesis: 'If I change X, more people will Y, because Z.' " +
+      "Then write **Version A** and **Version B** — identical except that one variable.\n\n" +
+      "### How to read the result\n" +
+      "In plain language: what number tells them A or B won, roughly how many people they need to see it before the result means anything (warn against calling it on 5 clicks), and what to do next if it's basically a tie.\n\n" +
+      "### One honest gut-check\n" +
+      "The riskiest assumption baked into this campaign, and the smallest way to sanity-check it before spending real effort.\n\n" +
+      "STUDENT INPUTS\n" +
+      "- Segment (who): " + v.segment + "\n" +
+      "- Offer + price: " + v.offer + "\n" +
+      "- Channel: " + v.channel + "\n" +
+      "- Desired action: " + (v.goal || "(they didn't say — pick the most sensible one and note it)") + "\n" +
+      "- What's worked/flopped before: " + (v.notes || "(none given)");
+  }
+
+  /* ============ SHARED wiring ============ */
+  showBridgeBannerIfNeeded();
+  var lastText="";
+  wireExport(function(){ return lastText; }, "week23-campaign.txt");
+
+  var go=document.getElementById("go");
+  go.addEventListener("click", async function(){
+    var segment=document.getElementById("in_segment").value.trim();
+    var offer=document.getElementById("in_offer").value.trim();
+    if(!segment){ document.getElementById("in_segment").focus(); toast("Tell me who it's for first"); return; }
+    if(!offer){ document.getElementById("in_offer").focus(); toast("Add your offer"); return; }
+
+    go.disabled=true; var label=go.textContent; go.innerHTML='<span class="spinner"></span>Building…';
+    var outCard=document.getElementById("outCard"), out=document.getElementById("out");
+    try {
+      var reply=await callClaude(buildPrompt({
+        segment:segment, offer:offer,
+        channel:document.getElementById("in_channel").value,
+        goal:document.getElementById("in_goal").value.trim(),
+        notes:document.getElementById("in_notes").value.trim()
+      }));
+      lastText=reply; out.innerHTML=render(reply);
+      outCard.classList.add("show"); outCard.scrollIntoView({behavior:"smooth",block:"start"});
+    } catch(e){
+      out.innerHTML='<p style="color:var(--bad)"><strong>Couldn\'t reach the coach.</strong><br>'+esc(e.message)+'</p>';
+      outCard.classList.add("show");
+    } finally { go.disabled=false; go.textContent=label; }
+  });
+})();
+</script>

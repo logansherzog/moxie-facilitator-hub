@@ -1,0 +1,54 @@
+/* ============================================================
+   TYPOGRAPHY — Startup Moxie
+   Display: Montserrat (geometric, heavy — echoes the wordmark)
+   Body:    Poppins (RISE Design System body font)
+   ============================================================ */
+:root {
+  --font-display: 'Montserrat', system-ui, sans-serif;
+  --font-body: 'Poppins', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Weights */
+  --fw-regular: 400; /* @kind font */
+  --fw-medium: 500; /* @kind font */
+  --fw-semibold: 600; /* @kind font */
+  --fw-bold: 700; /* @kind font */
+  --fw-extrabold: 800; /* @kind font */
+  --fw-black: 900; /* @kind font */
+
+  /* Type scale (fluid-friendly px) */
+  --fs-display: 64px;   /* hero */
+  --fs-h1: 46px;
+  --fs-h2: 34px;
+  --fs-h3: 25px;
+  --fs-h4: 20px;
+  --fs-body-lg: 19px;
+  --fs-body: 17px;
+  --fs-body-sm: 15px;
+  --fs-caption: 13px;
+  --fs-overline: 12px;
+
+  /* Line heights */
+  --lh-tight: 1.05; /* @kind font */
+  --lh-heading: 1.15; /* @kind font */
+  --lh-snug: 1.35; /* @kind font */
+  --lh-body: 1.6; /* @kind font */
+
+  /* Letter spacing */
+  --ls-tight: -0.02em; /* @kind font */
+  --ls-normal: 0; /* @kind font */
+  --ls-overline: 0.14em; /* @kind font */
+}
+
+/* Display headings use Montserrat, tight + bold */
+.moxie-display { font-family: var(--font-display); font-weight: var(--fw-extrabold); font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--ls-tight); color: var(--text-heading); }
+.moxie-h1 { font-family: var(--font-display); font-weight: var(--fw-extrabold); font-size: var(--fs-h1); line-height: var(--lh-heading); letter-spacing: var(--ls-tight); color: var(--text-heading); }
+.moxie-h2 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h2); line-height: var(--lh-heading); color: var(--text-heading); }
+.moxie-h3 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h3); line-height: var(--lh-snug); color: var(--text-heading); }
+
+/* Uppercase eyebrow / overline — the site's section kickers ("UNIQUE", "AWARE") */
+.moxie-overline { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-overline); line-height: 1.2; letter-spacing: var(--ls-overline); text-transform: uppercase; color: var(--color-accent); }
+
+.moxie-body { font-family: var(--font-body); font-weight: var(--fw-regular); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-body); }
+.moxie-body-lg { font-family: var(--font-body); font-weight: var(--fw-regular); font-size: var(--fs-body-lg); line-height: var(--lh-body); color: var(--text-body); }
+.moxie-caption { font-family: var(--font-body); font-weight: var(--fw-semibold); font-size: var(--fs-caption); line-height: 1.4; color: var(--text-muted); }

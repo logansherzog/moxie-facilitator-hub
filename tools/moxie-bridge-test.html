@@ -1,0 +1,156 @@
+<title>Moxie AI Bridge Test</title>
+<style>
+  :root {
+    --blue-900:#062f4d; --blue-700:#0c5689; --blue-500:#2b7fb8; --blue-050:#eef5fa;
+    --pink-600:#e3359e; --lime-500:#d8d849; --purple-600:#575da9;
+    --ink-900:#14202b; --ink-700:#33475a; --ink-500:#5c6b78; --line:#d9e0e6;
+    --paper:#ffffff; --app:#f5f8fa;
+    --ok:#2f9e6b; --ok-soft:#e2f3ec; --bad:#d64545; --bad-soft:#fbe4e4;
+    --wait:#e0a23a; --wait-soft:#fbf0da;
+    --bg:var(--app); --card:var(--paper); --text:var(--ink-700); --head:var(--ink-900);
+    --muted:var(--ink-500); --border:var(--line);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0b1620; --card:#132330; --text:#c6d3dd; --head:#eef5fa;
+      --muted:#8a97a2; --border:#25384a; --blue-050:#12202c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#0b1620; --card:#132330; --text:#c6d3dd; --head:#eef5fa;
+    --muted:#8a97a2; --border:#25384a; --blue-050:#12202c;
+  }
+  :root[data-theme="light"] {
+    --bg:#f5f8fa; --card:#ffffff; --text:#33475a; --head:#14202b;
+    --muted:#5c6b78; --border:#d9e0e6; --blue-050:#eef5fa;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .wrap { max-width:640px; margin:0 auto; padding:48px 22px 80px; }
+  .eyebrow {
+    font-weight:700; font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--pink-600); margin:0 0 10px;
+  }
+  h1 { font-size:30px; line-height:1.15; letter-spacing:-0.02em; color:var(--head); margin:0 0 8px; font-weight:800; text-wrap:balance; }
+  .sub { color:var(--muted); margin:0 0 32px; font-size:16px; }
+  .card {
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:24px; margin-bottom:20px;
+  }
+  .card h2 { font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:0 0 16px; font-weight:700; }
+  .status { display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:10px; margin-bottom:10px; font-weight:600; font-size:15px; }
+  .status:last-child { margin-bottom:0; }
+  .status .dot { width:10px; height:10px; border-radius:50%; flex:none; }
+  .s-ok { background:var(--ok-soft); color:var(--ok); }
+  .s-ok .dot { background:var(--ok); }
+  .s-bad { background:var(--bad-soft); color:var(--bad); }
+  .s-bad .dot { background:var(--bad); }
+  .s-wait { background:var(--wait-soft); color:var(--wait); }
+  .s-wait .dot { background:var(--wait); }
+  button {
+    appearance:none; border:none; cursor:pointer; font:inherit; font-weight:700;
+    background:var(--blue-700); color:#fff; padding:14px 22px; border-radius:10px;
+    font-size:15px; transition:background .15s;
+  }
+  button:hover:not(:disabled) { background:var(--blue-900); }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  button:focus-visible { outline:3px solid var(--lime-500); outline-offset:2px; }
+  .out {
+    margin-top:16px; padding:16px; border-radius:10px; background:var(--blue-050);
+    border:1px solid var(--border); font-family:ui-monospace,"SF Mono",Menlo,monospace;
+    font-size:14px; white-space:pre-wrap; word-break:break-word; color:var(--head);
+    min-height:24px;
+  }
+  .steps { padding-left:0; list-style:none; margin:0; counter-reset:s; }
+  .steps li { position:relative; padding:6px 0 6px 34px; counter-increment:s; }
+  .steps li::before {
+    content:counter(s); position:absolute; left:0; top:6px; width:22px; height:22px;
+    background:var(--purple-600); color:#fff; border-radius:50%; font-size:12px;
+    font-weight:700; display:grid; place-items:center;
+  }
+  code { background:var(--blue-050); padding:2px 6px; border-radius:5px; font-size:13px; }
+  .foot { color:var(--muted); font-size:13px; margin-top:28px; text-align:center; }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Startup Moxie · Diagnostic</p>
+  <h1>AI Bridge Test</h1>
+  <p class="sub">Confirms whether a published artifact can call Claude on the <strong>viewer's own account</strong> — the mechanism every Moxie tool depends on. Open this on a free Claude account and run the test.</p>
+
+  <div class="card">
+    <h2>1 · Bridge detection</h2>
+    <div id="detect"></div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Live call</h2>
+    <button id="run" disabled>Run test call</button>
+    <div class="out" id="out">Waiting for detection…</div>
+  </div>
+
+  <div class="card">
+    <h2>How to read the result</h2>
+    <ul class="steps">
+      <li>Open this link on a <strong>free</strong> Claude account (log out of Pro, or use a different browser profile).</li>
+      <li>Green on both cards + a reply saying <code>BRIDGE OK</code> → the mechanism works. We build all 36 tools this way.</li>
+      <li>Red detection → published artifacts don't expose <code>window.claude.complete</code>. We switch to the fallback (shared Project or no-login web tools).</li>
+    </ul>
+  </div>
+
+  <p class="foot">Throwaway diagnostic — safe to delete after testing.</p>
+</div>
+
+<script>
+  (function () {
+    var detect = document.getElementById("detect");
+    var out = document.getElementById("out");
+    var run = document.getElementById("run");
+
+    function row(cls, label) {
+      return '<div class="status ' + cls + '"><span class="dot"></span>' + label + '</div>';
+    }
+
+    var hasClaude = (typeof window.claude !== "undefined") && window.claude !== null;
+    var hasComplete = hasClaude && typeof window.claude.complete === "function";
+
+    var html = "";
+    html += hasClaude
+      ? row("s-ok", "window.claude is present")
+      : row("s-bad", "window.claude is NOT present");
+    html += hasComplete
+      ? row("s-ok", "window.claude.complete() is callable")
+      : row("s-bad", "window.claude.complete() is missing");
+    detect.innerHTML = html;
+
+    if (hasComplete) {
+      run.disabled = false;
+      out.textContent = "Ready. Click “Run test call.”";
+    } else {
+      out.innerHTML = '<span style="color:var(--bad)">No bridge to call. This is the signal to use the fallback approach.</span>';
+    }
+
+    run.addEventListener("click", async function () {
+      run.disabled = true;
+      out.textContent = "Calling Claude…";
+      try {
+        var reply = await window.claude.complete(
+          "You are a test harness. Reply with exactly this text and nothing else: BRIDGE OK"
+        );
+        var clean = (reply == null ? "" : String(reply)).trim();
+        var passed = clean.toUpperCase().indexOf("BRIDGE OK") !== -1;
+        out.innerHTML = (passed
+          ? '<span style="color:var(--ok)">✓ PASS — </span>'
+          : '<span style="color:var(--wait)">⚠ Call returned, unexpected text — </span>')
+          + "Claude replied:\n\n" + clean;
+      } catch (e) {
+        out.innerHTML = '<span style="color:var(--bad)">✗ Call failed:</span>\n\n' + (e && e.message ? e.message : String(e));
+      } finally {
+        run.disabled = false;
+      }
+    });
+  })();
+</script>
