@@ -48,6 +48,21 @@
     return '<a class="slide-vid" href="' + esc(v.url) + '" target="_blank" rel="noopener">' + ic('external-link') + ' Find a video</a>';
   }
 
+  // The week's slide videos (from the Monday outline), listed on the deep-dive page
+  // so a facilitator reading the article has the same links as the slide outline.
+  function articleVideos(l) {
+    var rows = (l.slideOutline || []).filter(function (s) { return s.video; });
+    if (!rows.length) return '';
+    return '<section class="article-videos"><div class="eyebrow sec-eyebrow">Videos for this week</div>' +
+      '<p class="article-videos-note">Pulled from the Monday slide outline. Preview each clip before class.</p>' +
+      '<div class="article-video-list">' + rows.map(function (s) {
+        return '<div class="article-video-row"><span class="slide-n">' + esc(s.n) + '</span>' +
+          '<div><div class="slide-t">' + esc(s.title) + '</div>' + videoMarkup(s.video) + '</div></div>';
+      }).join('') + '</div>' +
+      '<a class="article-videos-all" href="lesson.html?id=' + encodeURIComponent(l.id) + '#s-outline">Full slide outline ' + ic('arrow-right') + '</a>' +
+      '</section>';
+  }
+
   function eachLesson(fn) {
     M.units.forEach(function (u, ui) {
       u.lessons.forEach(function (l) { fn(l, u, ui); });
@@ -468,6 +483,7 @@
             : '') +
         '</header>' +
         '<div class="article-body">' + a.html + '</div>' +
+        articleVideos(l) +
         '<footer class="article-foot"><a class="hero-link" href="lesson.html?id=' + encodeURIComponent(l.id) + '">Back to the week <span>' + ic('arrow-right') + '</span></a></footer>' +
       '</article>';
     drawIcons();

@@ -238,7 +238,10 @@ window.MOXIE = {
               "title": "Title",
               "onSlide": "\"What Is Entrepreneurship?\" · \"Mindset, Practice & Life Design\" · Week 1 · Monday",
               "image": "Energetic, diverse group of young people building / collaborating (not stock suits).",
-              "video": ""
+              "video": {
+                "kind": "search",
+                "url": "https://www.youtube.com/results?search_query=what+is+entrepreneurship+for+students"
+              }
             },
             {
               "n": 2,
@@ -299,7 +302,7 @@ window.MOXIE = {
             {
               "n": 7,
               "title": "The Entrepreneurial Mindset",
-              "onSlide": "",
+              "onSlide": "See problems as opportunities · Act with what you have · Learn from failure",
               "image": "Lightbulb made of hands / person building from scraps.",
               "video": {
                 "kind": "video",
@@ -334,7 +337,7 @@ window.MOXIE = {
             {
               "n": 10,
               "title": "Activity: My Entrepreneurial Identity",
-              "onSlide": "",
+              "onSlide": "Problems I Notice · Things I'm Good At · People I Want to Help",
               "image": "A filled-in worksheet / student journaling.",
               "video": ""
             },
@@ -343,7 +346,10 @@ window.MOXIE = {
               "title": "Close + Goal Setting",
               "onSlide": "\"This year I want to build ________.\" · \"Write one sentence. Say it out loud to the person next to you.\" · footer: Next → Tuesday",
               "image": "Sunrise / open road — forward momentum.",
-              "video": ""
+              "video": {
+                "kind": "search",
+                "url": "https://www.youtube.com/results?search_query=start+before+you+are+ready+short"
+              }
             }
           ],
           "planDocUrl": "https://docs.google.com/document/d/1kCaT0MvrSKoU0Ar55wPQlOySqtGaT-Hw/edit?usp=drivesdk&ouid=111429861785300917858&rtpof=true&sd=true",

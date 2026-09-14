@@ -370,3 +370,11 @@ main{width:100%;margin:0 auto}
   .hub-toolbar{top:56px}
   .result-count{margin-left:0;width:100%;order:5}
 }
+
+/* Deep-dive: videos for the week */
+.article-videos{max-width:720px;margin:40px auto 0;padding-top:28px;border-top:1px solid var(--border-default)}
+.article-videos-note{font-family:var(--font-body);font-size:14px;color:var(--text-muted);margin:6px 0 18px}
+.article-video-list{display:flex;flex-direction:column;gap:14px}
+.article-video-row{display:flex;gap:14px;align-items:flex-start}
+.article-video-row .slide-vid{margin-top:6px}
+.article-videos-all{display:inline-flex;align-items:center;gap:6px;margin-top:22px;font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--color-accent)}
